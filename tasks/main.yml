@@ -1,0 +1,43 @@
+---
+# tasks file for server_db
+
+# Setup MariaDB repository
+- name: Add an apt key by id from a keyserver
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: C74CD1D8
+
+- name: Add MariaDB repository
+  apt_repository:
+    repo: deb http://ftp.icm.edu.pl/pub/unix/database/mariadb/repo/10.4/debian buster main
+    state: present
+
+- name: Install Mariadb package
+  apt:
+    name: "{{ mariadb_packages }}" # Replace by your own entries
+    install_recommends: yes
+
+- name: Remove anonymous user in database
+  mysql_user:
+    name: ''
+    host_all: yes
+    state: absent
+
+- name: Setup MariaDB root user
+  mysql_user:
+    name: root
+    password: "{{ emma_root_db }}" # Replace by your own entries
+    priv: '*.*:ALL,GRANT'
+    state: present
+
+- name: Create mattermost database
+  mysql_db:
+    name: mattermost
+    state: present
+
+- name: Create MariaDB Mattermost user
+  mysql_user:
+    name: mmuser
+    password: "{{ emma_mmuser_db }}" # Replace by your own entries
+    priv: 'mattermost.*:ALL'
+    state: present

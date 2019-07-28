@@ -1,0 +1,5 @@
+---
+# defaults file for server_db
+mariadb_packages:
+  - mariadb-server
+  - python-mysqldb
